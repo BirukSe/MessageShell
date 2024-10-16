@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure message transmission</title>
+    <style>
+        body {
+            background-color: black; /* Black background */
+            color: #00FF00; /* Green text color */
+            font-family: 'Courier New', Courier, monospace; /* Monospace font */
+            padding: 20px; /* Add some padding */
+        }
+        #inputContainer {
+            display: flex; /* Flexbox for input prompt */
+        }
+        #prompt {
+            margin-right: 5px; /* Space between prompt and input */
+        }
+        #userInput {
+            background-color: black; /* Input background */
+            color: #00FF00; /* Input text color */
+            border: none; /* No border */
+            outline: none; /* No outline */
+            flex-grow: 1; /* Make input take available space */
+        }
+        #userInput:focus {
+            border-color: #FFCC00; /* Optional: change color on focus */
+        }
+    </style>
+</head>
+<body>
+    <h1>Secure message transmitter</h1>
+    <div id="output">
+        <h2>Messages:</h2>
+        <p id="messageDisplay"><%= message ? message.textcon : 'No message yet.' %></p>
+    </div>
+    
+    <div id="inputContainer">
+        <span id="prompt">></span>
+        <input type="text" id="userInput" placeholder="Type your message here..." autofocus>
+    </div>
+
+    <script>
+        const userInput = document.getElementById('userInput');
+
+        userInput.addEventListener('keypress', async function(event) {
+            if (event.key === 'Enter') {
+                const message = userInput.value;
+                if (message) {
+                    // Send the message to the server
+                    const response = await fetch('/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ textCon: message }),
+                    });
+
+                    // Clear the input field
+                    userInput.value = '';
+                    if (response.ok) {
+                    window.location.reload(); // Reload the page to fetch and display the new message
+                } else {
+                    console.error('Failed to send message:', response.statusText);
+                }
+
+                    
+                }
+            }
+        });
+    </script>
+</body>
+</html>
