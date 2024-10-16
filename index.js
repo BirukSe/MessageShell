@@ -1,17 +1,18 @@
 import pg from 'pg';
 import express from 'express';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const db = new pg.Client({
-    user: 'birukee',
-    host: 'localhost',
-    database: 'Blog',
-    password: 'new_password',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
 });
 
-db.connect();
+db.connect()
+    .then(() => console.log('Database connected'))
+    .catch(err => console.error('Database connection error:', err));
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 app.use(express.json());
@@ -50,7 +51,7 @@ app.post('/send', async (req, res) => {
     try {
         await db.query("TRUNCATE TABLE message");
         const result=await db.query('insert into message (textCon) values($1)', [textCon]); 
-        // res.redirect('/');
+        res.redirect('/');
       
       
     } catch (err) {
